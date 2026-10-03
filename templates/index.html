@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}SkillMatch — Find internships and jobs that match your skills{% endblock %}
+{% block content %}
+<div class="hero">
+    <h1>SkillMatch</h1>
+    <p>Find internships and jobs that match your skills.</p>
+    <div class="actions">
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('student.opportunities') if not current_user.is_admin() else url_for('admin.dashboard') }}" class="btn btn-primary">Find Opportunities</a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Find Opportunities</a>
+            <a href="{{ url_for('auth.register') }}" class="btn">Create Profile</a>
+            <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
+        {% endif %}
+    </div>
+    <p style="margin-top:24px; color: var(--text-dim); font-size:0.9rem;">{{ total_opportunities }}+ opportunities currently listed</p>
+</div>
+
+<div class="section">
+    <h2>How SkillMatch Works</h2>
+    <p class="lead">Four simple steps to your next opportunity.</p>
+    <div class="grid grid-3">
+        <div class="card"><h3>1. Build Your Profile</h3><p>Add your skills, education, projects and resume.</p></div>
+        <div class="card"><h3>2. Get Matched</h3><p>Our algorithm compares your skills against real job requirements.</p></div>
+        <div class="card"><h3>3. See Your Skill Gap</h3><p>Know exactly which skills you're missing for each role.</p></div>
+        <div class="card"><h3>4. Apply & Track</h3><p>Apply through the official link and track your progress end-to-end.</p></div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Features</h2>
+    <div class="grid grid-3">
+        <div class="card">
+            <h3>Skill Matching</h3>
+            <p>Get a precise Skill Match % for every opportunity, with matched and missing skills shown clearly.</p>
+        </div>
+        <div class="card">
+            <h3>Resume Analysis</h3>
+            <p>Upload your resume and get a rule-based skill breakdown and improvement suggestions.</p>
+        </div>
+        <div class="card">
+            <h3>Career Recommendations</h3>
+            <p>See opportunities ranked by match, work preference, location and stipend/salary fit.</p>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>For Students</h2>
+    <p class="lead">Build one profile, get matched to internships and jobs across companies — no more spraying applications blindly.</p>
+</div>
+
+<div class="section">
+    <h2>For Recruiters / College Admin</h2>
+    <p class="lead">Post opportunities, manage listings and view interested, well-matched student applicants from one dashboard.</p>
+</div>
+{% endblock %}

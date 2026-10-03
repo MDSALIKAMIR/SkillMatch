@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/student_sidebar.html' %}
+    <div class="main-content">
+        <h2>Welcome, {{ current_user.name }}</h2>
+        <p style="color:var(--text-dim); margin-top:-8px;">Here's what's happening with your job search.</p>
+
+        <div class="stat-grid">
+            <div class="stat-card"><div class="num">{{ stats.saved }}</div><div class="label">Saved</div></div>
+            <div class="stat-card"><div class="num">{{ stats.applied }}</div><div class="label">Applied</div></div>
+            <div class="stat-card"><div class="num">{{ stats.shortlisted }}</div><div class="label">Shortlisted</div></div>
+            <div class="stat-card"><div class="num">{{ stats.selected }}</div><div class="label">Selected</div></div>
+        </div>
+
+        {% if not profile.skills %}
+        <div class="sample-notice">Your profile has no skills yet — <a href="{{ url_for('student.profile') }}">add your skills</a> to get accurate matches.</div>
+        {% endif %}
+
+        <h3>Recommended For You</h3>
+        {% if ranked %}
+            {% for r in ranked %}
+                {% include 'partials/opp_card.html' %}
+            {% endfor %}
+            <a href="{{ url_for('student.opportunities') }}" class="btn">View All Opportunities</a>
+        {% else %}
+            <p style="color:var(--text-dim);">No opportunities available yet. Check back soon.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

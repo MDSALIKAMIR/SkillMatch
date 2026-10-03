@@ -1,0 +1,8 @@
+<div class="sidebar">
+    <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}">Dashboard</a>
+    <a href="{{ url_for('admin.opportunities') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin.') and 'opportunit' in request.endpoint }}">Opportunities</a>
+    <a href="{{ url_for('admin.companies') }}" class="{{ 'active' if request.endpoint == 'admin.companies' }}">Companies</a>
+    <a href="{{ url_for('admin.students') }}" class="{{ 'active' if request.endpoint == 'admin.students' }}">Students</a>
+    <a href="{{ url_for('admin.applications') }}" class="{{ 'active' if request.endpoint == 'admin.applications' }}">Applications</a>
+    <a href="{{ url_for('admin.skills') }}" class="{{ 'active' if request.endpoint == 'admin.skills' }}">Skills</a>
+</div>

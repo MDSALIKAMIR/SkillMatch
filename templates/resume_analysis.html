@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Resume Analysis — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/student_sidebar.html' %}
+    <div class="main-content">
+        <h2>Resume Skill Analysis</h2>
+        <p style="color:var(--text-dim);">Rule-based analysis (no external AI API used) comparing your profile skills against skills requested across all listed opportunities.</p>
+
+        <div class="card" style="margin-bottom:16px;">
+            <h3>Skills Found in Your Profile</h3>
+            {% for s in matched %}<span class="skill-tag">✅ {{ s }}</span>{% else %}<span style="color:var(--text-dim);">No overlapping skills yet — add skills to your profile.</span>{% endfor %}
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+            <h3>Commonly Requested Skills You're Missing</h3>
+            {% for s in missing %}<span class="skill-tag missing">❌ {{ s }}</span>{% else %}<span style="color:var(--text-dim);">You're covering the most in-demand skills!</span>{% endfor %}
+        </div>
+
+        <div class="card">
+            <h3>Suggestions</h3>
+            <ul>
+                {% for s in suggestions %}<li>{{ s }}</li>{% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

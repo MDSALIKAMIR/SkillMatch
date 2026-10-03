@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ opp.title }} — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/student_sidebar.html' %}
+    <div class="main-content">
+        {% if opp.is_sample %}
+        <div class="sample-notice">This is sample/demo data for hackathon demonstration. The apply link is not a verified live posting.</div>
+        {% endif %}
+
+        <div class="card">
+            <h2 style="margin-top:0;">{{ opp.title }}</h2>
+            <p class="opp-company" style="font-size:1rem;">{{ opp.company.company_name }} &middot; {{ opp.location }}</p>
+
+            <div class="opp-meta">
+                <span class="badge">{{ opp.type }}</span>
+                <span class="badge">{{ opp.work_mode }}</span>
+                {% if opp.type == 'Internship' %}<span class="badge">Stipend: ₹{{ opp.stipend }}</span>
+                {% else %}<span class="badge">Salary: ₹{{ opp.salary }}</span>{% endif %}
+                {% if opp.deadline %}<span class="badge">Deadline: {{ opp.deadline.strftime('%d %b %Y') }}</span>{% endif %}
+                <span class="badge">Education: {{ opp.education_requirement or 'Not specified' }}</span>
+                <span class="badge">Experience: {{ opp.experience_requirement or 'Not specified' }}</span>
+            </div>
+
+            <h3>Description</h3>
+            <p style="color:var(--text-dim);">{{ opp.description }}</p>
+
+            <h3>Your Skill Match</h3>
+            <div class="match-badge {{ match.css_class }}" style="display:inline-block; margin-bottom:12px;">{{ match.percentage }}% — {{ match.label }}</div>
+            <div class="progress-bar-bg" style="max-width:300px; margin-bottom:16px;"><div class="progress-bar-fill" style="width:{{ match.percentage }}%;"></div></div>
+
+            <p><strong>Matched Skills</strong></p>
+            <div style="margin-bottom:12px;">
+                {% for s in match.matched %}<span class="skill-tag">✅ {{ s }}</span>{% else %}<span style="color:var(--text-dim);">None yet</span>{% endfor %}
+            </div>
+            <p><strong>Missing Skills</strong></p>
+            <div style="margin-bottom:16px;">
+                {% for s in match.missing %}<span class="skill-tag missing">❌ {{ s }}</span>{% else %}<span style="color:var(--text-dim);">None — you meet all requirements!</span>{% endfor %}
+            </div>
+
+            {% if match.missing %}
+            <div class="card" style="background: var(--bg-panel);">
+                <h4 style="margin-top:0;">Recommended Skills to Learn</h4>
+                <ul>
+                    {% for s in match.missing %}<li>{{ s }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+                <a href="{{ opp.apply_url }}" target="_blank" class="btn btn-primary">Apply Now (Official Link)</a>
+                {% if is_saved %}
+                    <form method="POST" action="{{ url_for('student.unsave_opportunity', opp_id=opp.id) }}"><button class="btn">Remove from Saved</button></form>
+                {% else %}
+                    <form method="POST" action="{{ url_for('student.save_opportunity', opp_id=opp.id) }}"><button class="btn">Save</button></form>
+                {% endif %}
+                <form method="POST" action="{{ url_for('student.mark_applied', opp_id=opp.id) }}">
+                    <button class="btn" {{ 'disabled' if application and application.status != 'Saved' }}>
+                        {{ 'Applied' if application and application.status != 'Saved' else 'Mark as Applied' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

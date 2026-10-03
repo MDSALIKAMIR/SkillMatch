@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}All Applications — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/admin_sidebar.html' %}
+    <div class="main-content">
+        <h2>All Applications</h2>
+        <div class="card">
+            <table>
+                <thead><tr><th>Student</th><th>Company</th><th>Position</th><th>Status</th><th>Applied Date</th></tr></thead>
+                <tbody>
+                {% for a in apps %}
+                    <tr>
+                        <td>{{ a.student.user.name }}</td>
+                        <td>{{ a.opportunity.company.company_name }}</td>
+                        <td>{{ a.opportunity.title }}</td>
+                        <td><span class="status-pill status-{{ a.status }}">{{ a.status }}</span></td>
+                        <td>{{ a.applied_date.strftime('%d %b %Y') if a.applied_date else '-' }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" style="color:var(--text-dim);">No applications tracked yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

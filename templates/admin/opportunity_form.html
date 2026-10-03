@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if opp else 'Add' }} Opportunity — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/admin_sidebar.html' %}
+    <div class="main-content">
+        <h2>{{ 'Edit' if opp else 'Add' }} Opportunity</h2>
+        <div class="card">
+            <form method="POST">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Company Name *</label>
+                        <input type="text" name="company_name"
+                            value="{{ opp.company.company_name if opp and opp.company else '' }}"
+                            placeholder="Enter company name" required>
+                    </div>
+                    <div class="form-group"><label>Job/Internship Title</label><input type="text" name="title"
+                            value="{{ opp.title if opp else '' }}" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select name="type" required>
+                            {% for t in ['Internship','Full-time Job','Part-time','Apprenticeship'] %}
+                            <option value="{{ t }}" {{ 'selected' if opp and opp.type==t }}>{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Work Mode</label>
+                        <select name="work_mode" required>
+                            {% for w in ['Remote','Hybrid','On-site'] %}
+                            <option value="{{ w }}" {{ 'selected' if opp and opp.work_mode==w }}>{{ w }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"><label>Description</label><textarea name="description"
+                        rows="3">{{ opp.description if opp else '' }}</textarea></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Location</label><input type="text" name="location"
+                            value="{{ opp.location if opp else '' }}"></div>
+                    <div class="form-group"><label>Deadline</label><input type="date" name="deadline"
+                            value="{{ opp.deadline.isoformat() if opp and opp.deadline else '' }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Stipend (₹/month, for internships)</label><input type="number"
+                            name="stipend" value="{{ opp.stipend if opp else 0 }}"></div>
+                    <div class="form-group"><label>Salary (₹/year, for jobs)</label><input type="number" name="salary"
+                            value="{{ opp.salary if opp else 0 }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Education Requirement</label><input type="text"
+                            name="education_requirement" value="{{ opp.education_requirement if opp else '' }}"></div>
+                    <div class="form-group"><label>Experience Requirement</label><input type="text"
+                            name="experience_requirement" value="{{ opp.experience_requirement if opp else '' }}"></div>
+                </div>
+                <div class="form-group"><label>Official Apply URL</label><input type="url" name="apply_url"
+                        value="{{ opp.apply_url if opp else '' }}" required></div>
+                <div class="form-group">
+                    <label>Required Skills (comma-separated)</label>
+                    <input type="text" name="required_skills"
+                        value="{{ (opp.skills | map(attribute='skill_name') | join(', ')) if opp else '' }}"
+                        placeholder="Python, SQL, JavaScript, React">
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" name="is_sample" style="width:auto; display:inline-block;"
+                            {{ 'checked' if not opp or opp.is_sample }}> This is sample/demo data (not a verified real
+                        listing)</label>
+                </div>
+                <button type="submit" class="btn btn-primary">{{ 'Save Changes' if opp else 'Create Opportunity'
+                    }}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

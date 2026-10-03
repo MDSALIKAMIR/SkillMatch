@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Students — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/admin_sidebar.html' %}
+    <div class="main-content">
+        <h2>Students</h2>
+        <div class="card">
+            <table>
+                <thead><tr><th>Name</th><th>Email</th><th>College</th><th>Course</th><th>Skills</th><th>Joined</th></tr></thead>
+                <tbody>
+                {% for s in students %}
+                    <tr>
+                        <td>{{ s.name }}</td>
+                        <td>{{ s.email }}</td>
+                        <td>{{ s.profile.college if s.profile else '-' }}</td>
+                        <td>{{ s.profile.course if s.profile else '-' }}</td>
+                        <td>{{ (s.profile.skills | map(attribute='skill_name') | join(', ')) if s.profile and s.profile.skills else '-' }}</td>
+                        <td>{{ s.created_at.strftime('%d %b %Y') if s.created_at else '-' }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" style="color:var(--text-dim);">No students registered yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

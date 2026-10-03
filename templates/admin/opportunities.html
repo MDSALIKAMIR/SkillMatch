@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Manage Opportunities — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/admin_sidebar.html' %}
+    <div class="main-content">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Manage Opportunities</h2>
+            <a href="{{ url_for('admin.new_opportunity') }}" class="btn btn-primary">+ Add Opportunity</a>
+        </div>
+        <div class="card">
+            <table>
+                <thead><tr><th>Title</th><th>Company</th><th>Type</th><th>Location</th><th>Deadline</th><th>Sample?</th><th></th></tr></thead>
+                <tbody>
+                {% for o in opportunities %}
+                    <tr>
+                        <td>{{ o.title }}</td>
+                        <td>{{ o.company.company_name }}</td>
+                        <td>{{ o.type }}</td>
+                        <td>{{ o.location }}</td>
+                        <td>{{ o.deadline.strftime('%d %b %Y') if o.deadline else '-' }}</td>
+                        <td>{{ 'Yes' if o.is_sample else 'No' }}</td>
+                        <td style="display:flex; gap:6px;">
+                            <a href="{{ url_for('admin.edit_opportunity', opp_id=o.id) }}" class="btn btn-sm">Edit</a>
+                            <form method="POST" action="{{ url_for('admin.delete_opportunity', opp_id=o.id) }}" onsubmit="return confirm('Delete this opportunity?');">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7" style="color:var(--text-dim);">No opportunities yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

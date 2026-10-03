@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Opportunities — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/student_sidebar.html' %}
+    <div class="main-content">
+        <h2>Search Opportunities</h2>
+
+        <div class="card" style="margin-bottom:20px;">
+            <form method="GET">
+                <div class="form-row">
+                    <div class="form-group"><label>Keyword (title/company)</label><input type="text" name="q" value="{{ filters.get('q','') }}"></div>
+                    <div class="form-group"><label>Skill</label><input type="text" name="skill" value="{{ filters.get('skill','') }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select name="type">
+                            <option value="">Any</option>
+                            {% for t in ['Internship','Full-time Job','Part-time','Apprenticeship'] %}
+                            <option value="{{ t }}" {{ 'selected' if filters.get('type') == t }}>{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Work Mode</label>
+                        <select name="work_mode">
+                            <option value="">Any</option>
+                            {% for w in ['Remote','Hybrid','On-site'] %}
+                            <option value="{{ w }}" {{ 'selected' if filters.get('work_mode') == w }}>{{ w }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Location</label><input type="text" name="location" value="{{ filters.get('location','') }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Min Stipend/Salary</label><input type="number" name="min_stipend" value="{{ filters.get('min_stipend','') }}"></div>
+                    <div class="form-group"><label>Max Stipend/Salary</label><input type="number" name="max_stipend" value="{{ filters.get('max_stipend','') }}"></div>
+                    <div class="form-group">
+                        <label>Sort By</label>
+                        <select name="sort">
+                            <option value="match" {{ 'selected' if filters.get('sort','match') == 'match' }}>Highest Match</option>
+                            <option value="latest" {{ 'selected' if filters.get('sort') == 'latest' }}>Latest</option>
+                            <option value="stipend" {{ 'selected' if filters.get('sort') == 'stipend' }}>Highest Stipend</option>
+                            <option value="deadline" {{ 'selected' if filters.get('sort') == 'deadline' }}>Deadline</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a href="{{ url_for('student.opportunities') }}" class="btn">Clear</a>
+            </form>
+        </div>
+
+        <p style="color:var(--text-dim);">{{ ranked | length }} opportunities found</p>
+
+        {% for r in ranked %}
+            {% include 'partials/opp_card.html' %}
+        {% else %}
+            <p style="color:var(--text-dim);">No opportunities match your filters.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

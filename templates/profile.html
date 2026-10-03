@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}My Profile — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/student_sidebar.html' %}
+    <div class="main-content">
+        <h2>My Profile</h2>
+
+        <div class="card" style="margin-bottom:20px;">
+            <h3>Personal &amp; Education</h3>
+            <form method="POST">
+                <div class="form-row">
+                    <div class="form-group"><label>Full Name</label><input type="text" name="name" value="{{ current_user.name }}"></div>
+                    <div class="form-group"><label>Phone</label><input type="text" name="phone" value="{{ current_user.phone or '' }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Email</label><input type="text" value="{{ current_user.email }}" disabled></div>
+                    <div class="form-group"><label>Location</label><input type="text" name="location" value="{{ profile.location or '' }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>College</label><input type="text" name="college" value="{{ profile.college or '' }}"></div>
+                    <div class="form-group"><label>Course</label><input type="text" name="course" value="{{ profile.course or '' }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Graduation Year</label><input type="number" name="graduation_year" value="{{ profile.graduation_year or '' }}"></div>
+                    <div class="form-group"><label>CGPA</label><input type="number" step="0.01" name="cgpa" value="{{ profile.cgpa or '' }}"></div>
+                </div>
+
+                <h3>Career Preferences</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Looking For</label>
+                        <select name="looking_for">
+                            <option value="Internship" {{ 'selected' if profile.looking_for == 'Internship' }}>Internship</option>
+                            <option value="Job" {{ 'selected' if profile.looking_for == 'Job' }}>Job</option>
+                            <option value="Both" {{ 'selected' if profile.looking_for == 'Both' }}>Both</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Work Mode</label>
+                        <select name="work_mode">
+                            <option value="Any" {{ 'selected' if profile.work_mode == 'Any' }}>Any</option>
+                            <option value="Remote" {{ 'selected' if profile.work_mode == 'Remote' }}>Remote</option>
+                            <option value="Hybrid" {{ 'selected' if profile.work_mode == 'Hybrid' }}>Hybrid</option>
+                            <option value="On-site" {{ 'selected' if profile.work_mode == 'On-site' }}>On-site</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Expected Stipend (₹/month)</label><input type="number" name="expected_stipend" value="{{ profile.expected_stipend or 0 }}"></div>
+                    <div class="form-group"><label>Expected Salary (₹/year)</label><input type="number" name="expected_salary" value="{{ profile.expected_salary or 0 }}"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Preferred Location</label><input type="text" name="preferred_location" value="{{ profile.preferred_location or '' }}"></div>
+                    <div class="form-group"><label>Availability</label><input type="text" name="availability" placeholder="e.g. Immediately / From Jan 2027" value="{{ profile.availability or '' }}"></div>
+                </div>
+
+                <h3>Skills</h3>
+                <div class="form-group">
+                    <label>Your Skills (comma-separated)</label>
+                    <input type="text" name="skills" value="{{ profile.skills | map(attribute='skill_name') | join(', ') }}" placeholder="Python, SQL, HTML, CSS, JavaScript">
+                    <div class="chip-input-hint">Separate each skill with a comma.</div>
+                </div>
+
+                <h3>Links</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>GitHub</label><input type="text" name="github" value="{{ profile.github or '' }}"></div>
+                    <div class="form-group"><label>LinkedIn</label><input type="text" name="linkedin" value="{{ profile.linkedin or '' }}"></div>
+                    <div class="form-group"><label>Portfolio</label><input type="text" name="portfolio" value="{{ profile.portfolio or '' }}"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+            </form>
+        </div>
+
+        <div class="card" style="margin-bottom:20px;">
+            <h3>Resume</h3>
+            {% if profile.resume_path %}
+                <p>Current resume: <strong>{{ profile.resume_path }}</strong></p>
+                <a href="{{ url_for('student.download_resume') }}" class="btn btn-sm">Download Resume</a>
+                <a href="{{ url_for('student.analyze_resume') }}" class="btn btn-sm">Analyze Resume</a>
+            {% else %}
+                <p style="color:var(--text-dim);">No resume uploaded yet.</p>
+            {% endif %}
+            <form method="POST" action="{{ url_for('student.upload_resume') }}" enctype="multipart/form-data" style="margin-top:12px;">
+                <div class="form-group"><label>{{ 'Replace Resume' if profile.resume_path else 'Upload Resume' }} (PDF only, max 5MB)</label><input type="file" name="resume" accept="application/pdf" required></div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>Projects</h3>
+            {% for p in profile.projects %}
+                <div style="border-bottom:1px solid var(--border); padding: 10px 0;">
+                    <strong>{{ p.project_name }}</strong> &mdash; <span style="color:var(--text-dim);">{{ p.technologies }}</span>
+                    <p style="color:var(--text-dim); margin: 4px 0;">{{ p.description }}</p>
+                    {% if p.github_url %}<a href="{{ p.github_url }}" target="_blank">GitHub</a>{% endif %}
+                    {% if p.live_url %} &middot; <a href="{{ p.live_url }}" target="_blank">Live Demo</a>{% endif %}
+                    <form method="POST" action="{{ url_for('student.delete_project', project_id=p.id) }}" style="display:inline; float:right;">
+                        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                </div>
+            {% else %}
+                <p style="color:var(--text-dim);">No projects added yet.</p>
+            {% endfor %}
+
+            <form method="POST" action="{{ url_for('student.add_project') }}" style="margin-top:16px;">
+                <div class="form-row">
+                    <div class="form-group"><label>Project Name</label><input type="text" name="project_name" required></div>
+                    <div class="form-group"><label>Technologies Used</label><input type="text" name="technologies" placeholder="Python, Flask, MySQL"></div>
+                </div>
+                <div class="form-group"><label>Description</label><textarea name="description" rows="2"></textarea></div>
+                <div class="form-row">
+                    <div class="form-group"><label>GitHub Link</label><input type="text" name="github_url"></div>
+                    <div class="form-group"><label>Live Demo Link</label><input type="text" name="live_url"></div>
+                </div>
+                <button type="submit" class="btn">Add Project</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

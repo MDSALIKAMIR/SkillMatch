@@ -1,0 +1,27 @@
+<div class="opp-card">
+    <div class="opp-main">
+        <h3><a href="{{ url_for('student.opportunity_details', opp_id=r.opportunity.id) }}">{{ r.opportunity.title }}</a></h3>
+        <div class="opp-company">{{ r.opportunity.company.company_name }} &middot; {{ r.opportunity.location or 'Location not specified' }}</div>
+        <div class="opp-meta">
+            <span class="badge">{{ r.opportunity.type }}</span>
+            <span class="badge">{{ r.opportunity.work_mode }}</span>
+            {% if r.opportunity.type == 'Internship' %}
+                <span class="badge">Stipend: {{ '₹' ~ r.opportunity.stipend if r.opportunity.stipend else 'Unpaid' }}</span>
+            {% else %}
+                <span class="badge">Salary: {{ '₹' ~ r.opportunity.salary if r.opportunity.salary else 'Not disclosed' }}</span>
+            {% endif %}
+            {% if r.opportunity.deadline %}<span class="badge">Deadline: {{ r.opportunity.deadline.strftime('%d %b %Y') }}</span>{% endif %}
+        </div>
+        <div>
+            {% for s in r.match.matched %}<span class="skill-tag">✅ {{ s }}</span>{% endfor %}
+            {% for s in r.match.missing %}<span class="skill-tag missing">❌ {{ s }}</span>{% endfor %}
+        </div>
+    </div>
+    <div class="opp-side">
+        <div class="match-badge {{ r.match.css_class }}">{{ r.match.percentage }}% Match</div>
+        <div class="progress-bar-bg" style="width:120px;"><div class="progress-bar-fill" style="width:{{ r.match.percentage }}%;"></div></div>
+        <div class="opp-actions">
+            <a href="{{ url_for('student.opportunity_details', opp_id=r.opportunity.id) }}" class="btn btn-sm">View</a>
+        </div>
+    </div>
+</div>

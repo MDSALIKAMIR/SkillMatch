@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Saved Opportunities — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/student_sidebar.html' %}
+    <div class="main-content">
+        <h2>My Saved Opportunities</h2>
+        {% for r in results %}
+            <div class="opp-card">
+                <div class="opp-main">
+                    <h3><a href="{{ url_for('student.opportunity_details', opp_id=r.opportunity.id) }}">{{ r.opportunity.title }}</a></h3>
+                    <div class="opp-company">{{ r.opportunity.company.company_name }} &middot; {{ r.opportunity.location }}</div>
+                    <div class="opp-meta">
+                        <span class="badge">{{ r.opportunity.type }}</span>
+                        <span class="badge">{{ r.opportunity.work_mode }}</span>
+                    </div>
+                </div>
+                <div class="opp-side">
+                    <div class="match-badge {{ r.match.css_class }}">{{ r.match.percentage }}% Match</div>
+                    <div class="opp-actions">
+                        <a href="{{ r.opportunity.apply_url }}" target="_blank" class="btn btn-sm btn-primary">Apply</a>
+                        <form method="POST" action="{{ url_for('student.unsave_opportunity', opp_id=r.opportunity.id) }}">
+                            <button class="btn btn-sm btn-danger">Remove</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p style="color:var(--text-dim);">You haven't saved any opportunities yet. <a href="{{ url_for('student.opportunities') }}">Browse opportunities</a>.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

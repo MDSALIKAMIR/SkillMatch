@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}My Applications — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/student_sidebar.html' %}
+    <div class="main-content">
+        <h2>My Applications</h2>
+
+        <div class="stat-grid">
+            <div class="stat-card"><div class="num">{{ stats.Applied }}</div><div class="label">Applied</div></div>
+            <div class="stat-card"><div class="num">{{ stats.Shortlisted }}</div><div class="label">Shortlisted</div></div>
+            <div class="stat-card"><div class="num">{{ stats.Interview }}</div><div class="label">Interview</div></div>
+            <div class="stat-card"><div class="num">{{ stats.Selected }}</div><div class="label">Selected</div></div>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr><th>Company</th><th>Position</th><th>Applied Date</th><th>Status</th><th>Notes</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for a in apps %}
+                    <tr>
+                        <td>{{ a.opportunity.company.company_name }}</td>
+                        <td><a href="{{ url_for('student.opportunity_details', opp_id=a.opportunity.id) }}">{{ a.opportunity.title }}</a></td>
+                        <td>{{ a.applied_date.strftime('%d %b %Y') if a.applied_date else '-' }}</td>
+                        <td><span class="status-pill status-{{ a.status }}">{{ a.status }}</span></td>
+                        <td>
+                            <form method="POST" action="{{ url_for('student.update_application', app_id=a.id) }}" style="display:flex; gap:6px;">
+                                <select name="status" style="width:130px;">
+                                    {% for s in ['Saved','Applied','Shortlisted','Interview','Selected','Rejected'] %}
+                                    <option value="{{ s }}" {{ 'selected' if a.status == s }}>{{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                                <input type="text" name="notes" value="{{ a.notes or '' }}" placeholder="Notes" style="width:140px;">
+                                <button class="btn btn-sm">Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="{{ url_for('student.delete_application', app_id=a.id) }}">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" style="color:var(--text-dim);">No applications tracked yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

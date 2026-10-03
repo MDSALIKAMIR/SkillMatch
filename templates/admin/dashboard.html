@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — SkillMatch{% endblock %}
+{% block content %}
+<div class="dash-layout">
+    {% include 'partials/admin_sidebar.html' %}
+    <div class="main-content">
+        <h2>Admin Dashboard</h2>
+        <div class="stat-grid">
+            <div class="stat-card"><div class="num">{{ stats.total_students }}</div><div class="label">Total Students</div></div>
+            <div class="stat-card"><div class="num">{{ stats.total_opportunities }}</div><div class="label">Total Opportunities</div></div>
+            <div class="stat-card"><div class="num">{{ stats.total_applications }}</div><div class="label">Total Applications</div></div>
+            <div class="stat-card"><div class="num">{{ stats.total_companies }}</div><div class="label">Total Companies</div></div>
+        </div>
+
+        <div class="card">
+            <h3>Recently Added Opportunities</h3>
+            <table>
+                <thead><tr><th>Title</th><th>Company</th><th>Type</th><th>Deadline</th></tr></thead>
+                <tbody>
+                {% for o in recent_opportunities %}
+                    <tr>
+                        <td><a href="{{ url_for('admin.edit_opportunity', opp_id=o.id) }}">{{ o.title }}</a></td>
+                        <td>{{ o.company.company_name }}</td>
+                        <td>{{ o.type }}</td>
+                        <td>{{ o.deadline.strftime('%d %b %Y') if o.deadline else '-' }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4" style="color:var(--text-dim);">No opportunities yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{{ url_for('admin.new_opportunity') }}" class="btn btn-primary" style="margin-top:16px;">+ Add Opportunity</a>
+    </div>
+</div>
+{% endblock %}
